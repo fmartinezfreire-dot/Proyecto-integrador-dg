@@ -1,0 +1,75 @@
+import pandas as pd
+
+autos = pd.read_csv('https://docs.google.com/spreadsheets/d/1DRM_8oKLz4J9e3_c8uwlr1Vi8Zy3SJGP38tO6mSVd68/export?format=csv&gid=561855601')
+
+# 1 .- Realiza una visualización del dataset.
+print(autos.head())
+
+# 2.- Importa la librería correspondiente para visualizar gráficos y realiza un gráfico de dispersión donde se pueda ver la correlación
+#  entre la columna "Emisiones CO2(g/km)" y "Potencia (HP)". Además, calcula el coeficiente de correlación.
+import matplotlib.pyplot as plt
+
+plt.scatter(autos["Emisiones CO2(g/km)"], autos["Potencia (HP)"])
+plt.xlabel("Emisiones CO2 (g/km)")
+plt.ylabel("Potencia (HP)")
+plt.title("Relación entre Emisiones CO2 y Potencia (HP)")
+plt.show()
+
+print("Coeficiente de correlación:", autos["Emisiones CO2(g/km)"].corr(autos["Potencia (HP)"]))
+
+# 3.- Elimina la columna Color.
+autos = autos.drop(columns=["Color"])
+
+# 4.- Utiliza la función correspondiente para averiguar la cantidad de veces que aparece cada marca en la columna “Marca”.
+print(autos["Marca"].value_counts())
+
+# 5.- Utiliza la función correspondiente para pasar la columna “Año” de tipo str a int.
+autos["Año"] = autos["Año"].astype(int)
+
+# 6.- Utiliza la función correspondiente para averiguar el año del auto más antiguo en el dataset.
+print("Año más antiguo registrado:", autos["Año"].min())
+
+# 7.- Utiliza una combinación de máscaras con un operador lógico para filtrar autos donde la marca sea Audi y su potencia sea mayor a 400 HP.
+filtro_marca = autos["Marca"] == "Audi"
+filtro_potencia = autos["Potencia (HP)"] > 400
+audi_400 = autos[filtro_marca & filtro_potencia]
+print(audi_400)
+
+# 8.- Con la máscara realizada en el punto anterior, genera un value_counts() de la columna "Modelo", almacena el resultado en una variable y crea un gráfico de barras.
+modelos_audi = audi_400["Modelo"].value_counts()
+print(modelos_audi)
+
+modelos_audi.plot(kind="bar")
+plt.title("Modelos de Audi con más de 400 HP")
+plt.xlabel("Modelo")
+plt.ylabel("Cantidad")
+plt.show()
+
+# 9.- Utiliza .groupby() para agrupar los datos de la columna “Marca” y calcular la potencia promedio de cada marca. Almacenar el resultado en una variable.
+potencia_promedio = autos.groupby("Marca")["Potencia (HP)"].mean()
+print(potencia_promedio)
+
+# 10.- Crear una pivot_table() utilizando como índice "Marca" y como columna "Combustible" para obtener el promedio de la eficiencia de gas.
+eficiencia_gas = autos.pivot_table(values="Eficiencia gas (0-10)", index="Marca", columns="Combustible", aggfunc="mean")
+print(eficiencia_gas)
+
+
+# Preguntas: 
+
+# ¿Cuál es la correlación entre las emisiones de CO₂ y la potencia (HP)? Explica
+# La correlación es positiva, lo que significa que a medida que aumenta la potencia del vehículo, también aumentan las emisiones de CO₂.
+
+# ¿Qué marca predomina en el dataset?
+# La marca con más registros es la que aparece en primer lugar en autos["Marca"].value_counts().
+
+# ¿Cuál es el año más antiguo registrado en el dataset?
+# El año más antiguo es el valor más bajo de autos["Año"].min().
+
+# ¿Cuáles son los modelos de Audi con más de 400 HP?
+# Se muestran en la variable modelos_audi y en el gráfico de barras generado.
+
+# ¿Qué marca tiene la mayor potencia promedio?
+# Es la marca con el valor más alto en la variable potencia_promedio.
+
+# ¿Qué marca tiene la mejor eficiencia de gas en promedio usando Gasolina?
+# Se observa en la columna "Gasolina" de la tabla eficiencia_gas.
